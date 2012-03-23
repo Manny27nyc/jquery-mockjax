@@ -341,6 +341,38 @@ asyncTest('RegEx match', 1, function() {
 
 	$.mockjaxClear();
 });
+asyncTest('Content match', 2, function() {
+	// Issue #54
+	// Perform two slightly different requests to the same URL to make sure
+	// that the mockjax object isn't being messed up by the first call.
+	$.mockjax({
+		url: '/shared/url',
+		responseText: 'content match'
+	});
+	$.ajax({
+		url: '/shared/url',
+		error: noErrorCallbackExpected,
+		data: {
+			text: 'call1'
+		},
+		complete: function(xhr) {
+			equals(xhr.responseText, 'content match', 'Shared url/data match');
+			start();
+		}
+	});
+	$.ajax({
+		url: '/shared/url',
+		error: noErrorCallbackExpected,
+		data: {
+			text: 'call2'
+		},
+		complete: function(xhr) {
+			equals(xhr.responseText, 'content match', 'Shared url/data match');
+			start();
+		}
+	});
+	$.mockjaxClear();
+});
 
 
 // Test Data Types [Text, HTML, JSON, JSONP, Script and XML]
